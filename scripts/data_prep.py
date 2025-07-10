@@ -120,7 +120,7 @@ def build_feature_dataset(stimuli_df: pd.DataFrame, pos_value: str, mfcc_folder:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("audioDir", help="Path to the directory with the wav files")
-    parser.add_argument("noise", default=0, help="Standard deviation of added Gaussian noise, defaults to no noise")
+    parser.add_argument("--noise", default=0, help="Standard deviation of added Gaussian noise, defaults to no noise")
     args = parser.parse_args()
 
      
@@ -132,9 +132,19 @@ if __name__ == "__main__":
         pos, speaker, turn = name.split("_")
         index_df.loc[len(index_df)] = [pos, speaker, turn]
 
+
+
+    # Downsample to have for each position the same amount of data:
+    min_count = index_df['pos'].value_counts().min()
+    index_df = (
+        index_df.groupby('pos', group_keys=False)
+        .apply(lambda x: x.sample(n=min_count, random_state=42))
+        .sort_index()
+    )
+
     # Inspect the Data
-    speakers = set([filename.split("_")[1] for filename in files])
-    print("Number of Sound Snipptes: ", len(files))
+    speakers = set(list(index_df["speaker"]))
+    print("Number of Sound Snipptes: ", len(index_df["pos"]))
     print("Number of speakers: ", len(speakers))
     print("Speaker IDs: ", speakers)
 
