@@ -37,7 +37,7 @@ def train_random_forest(dataset, pos: Literal["b", "m", "e"]) -> RandomForestCla
     return clf
 
 
-def cross_eval_random_forest(noise: str, pos: Literal["b", "m", "e"], n_splits: int = 5):
+def cross_eval_random_forest(noise: str, pos: Literal["b", "m", "e", "all"], n_splits: int = 5):
     """
     noise: needs to be of form 'noise-10'
     """
@@ -54,8 +54,14 @@ def cross_eval_random_forest(noise: str, pos: Literal["b", "m", "e"], n_splits: 
     except FileNotFoundError:
         print(f"The dataset {dataset_filename} does not exist (yet).")
 
-    X = dataset[pos][0]
-    y = dataset[pos][1]
+    if pos == "all":
+        # Unpack and concatenate
+        X = np.concatenate([dataset[t][0] for t in dataset], axis=0)
+        y = np.concatenate([dataset[t][1] for t in dataset], axis=0)
+        print(f"lenght of the dataset: {len(y)}")
+    else:
+        X = dataset[pos][0]
+        y = dataset[pos][1]
 
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=RANDOM_STATE)
 
@@ -115,6 +121,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--noise", default=0,  help="Take a dataset with noise?")
     parser.add_argument("--folds", default=5, help="Number of folds for crosseval")
+    parser.add_argument("--all_data", action="store_true", default=False, help="run on all data, not for each condition of b, m, and e")
 
     args = parser.parse_args()
 
@@ -122,8 +129,12 @@ if __name__ == "__main__":
         noise = f"noise-{args.noise}"
     else: noise = False
 
-    pos_list = ["b", "m", "e"]
-    for pos in pos_list:
-        print(f"Calculating Crosseval for {pos}...")
-        cross_eval_random_forest(noise, pos, args.folds)
+    if args.all_data:
+        print(f"Calculating Crosseval for the full dataset on {args.folds} folds...")
+        cross_eval_random_forest(noise, "all", args.folds)
+    else:
+        pos_list = ["b", "m", "e"]
+        for pos in pos_list:
+            print(f"Calculating Crosseval for {pos}...")
+            cross_eval_random_forest(noise, pos, args.folds)
     print("done.")
