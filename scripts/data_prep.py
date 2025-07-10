@@ -146,7 +146,7 @@ if __name__ == "__main__":
         extract_and_store_mfccs(args.audioDir, MFCC_dir, total=len(files))
     else:
         MFCC_dir = f'MFCCs_noise_{str(args.noise).replace(".", "_")}'
-        dataset_filename = f'feature_dataset_noise_{str(args.noise).replace(".", "_")}.pickle'
+        dataset_filename = f'feature_dataset_noise-{str(args.noise).replace(".", "_")}.pickle'
         extract_and_store_mfccs_with_noise(args.audioDir, MFCC_dir, total=len(files), noise_std=float(args.noise))
 
     # Index the Stimuli

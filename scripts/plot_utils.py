@@ -47,7 +47,7 @@ def plot_speaker_distr(index_df):
     plt.show()
 
 
-
+# TODO: Make boxplots (once I have the data...)
 
 
 def plot_results(results):
@@ -64,8 +64,8 @@ def plot_results(results):
     fig, ax = plt.subplots(figsize=(8, 6))
 
     for i, pos in enumerate(positions):
-        means = [results[pos][0][metric].values[0] for metric in metrics]
-        stdevs = [results[pos][1][metric].values[0] for metric in metrics]
+        means = [results[pos][0][metric].values[1] for metric in metrics]
+        stdevs = [results[pos][1][metric].values[1] for metric in metrics]
         ci = 1.96 * np.array(stdevs)
         offset = (i - 1) * bar_width
         ax.bar(x + offset, means, bar_width, yerr=ci, label=pos_map[pos],
@@ -75,7 +75,7 @@ def plot_results(results):
     ax.set_xticklabels([m.capitalize() for m in metrics])
     ax.set_ylabel("Score")
     ax.set_title("Scores of RF Classifier")
-    ax.set_ylim(0.8, 1.01)
+    ax.set_ylim(0.5, 1.01)
 
     # Place legend outside the plot on the right
     ax.legend(title="Position", loc='center left', bbox_to_anchor=(1, 0.5))
