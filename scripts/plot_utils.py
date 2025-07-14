@@ -1,6 +1,38 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
+
+def box_per_pos(pos_dfs):
+    # Create a new DataFrame with f1-score and treatment label
+    f1_data = pd.DataFrame({
+        'f1-score': pd.concat(
+            [pos_dfs["b"]['f1-score'], pos_dfs["m"]['f1-score'], pos_dfs["e"]['f1-score']],
+            ignore_index=True
+        ),
+        'treatment': (
+            ['Beginning'] * len(pos_dfs["b"]) +
+            ['Middle'] * len(pos_dfs["m"]) +
+            ['End'] * len(pos_dfs["e"])
+        )
+    })
+
+    # Set category order
+    f1_data['treatment'] = pd.Categorical(
+        f1_data['treatment'],
+        categories=['Beginning', 'Middle', 'End'],
+        ordered=True
+    )
+
+    # Plot the boxplot
+    plt.figure(figsize=(6, 6))
+    f1_data.boxplot(column='f1-score', by='treatment', showfliers=False)
+    plt.title('F1-score by Position')
+    plt.suptitle('')  # Remove default pandas title
+    plt.xlabel('')
+    plt.ylabel('F1-score')
+    plt.grid(False)
+    plt.show()
 
 def plot_speaker_distr(index_df):
     # Mapping for POS codes to full names

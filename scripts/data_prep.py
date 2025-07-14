@@ -22,6 +22,25 @@ def extract_and_store_mfccs(audio_folder: str, mfcc_folder: str, n_mfcc: int = 1
         np.save(output_file, mfcc)
 
 
+def create_pos_df_and_summary(noise):
+    """Helper function to create DFs of the results"""
+    summary = {"pos":[]}
+    pos_dfs = {}
+    for pos in ["b", "m", "e"]:
+        df = pd.read_csv(f"results/onlyTarget_folds-5_{noise}_pos-{pos}.csv")
+        pos_dfs[pos] = df
+        summary["pos"].append(pos)
+        for column in df.columns:
+            if column in ["Unnamed: 0", 'fold']:
+                continue
+            if column in summary:
+                summary[column].append(df[column].mean())
+            else:
+                summary[column] = [df[column].mean()]
+    summary_df = pd.DataFrame(summary)
+    return pos_dfs, summary_df
+
+
 def extract_and_store_mfccs_with_noise(
     audio_folder: str,
     mfcc_folder: str,
