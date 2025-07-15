@@ -1,5 +1,7 @@
-# Do Speakers Mark the Beginning of an Utterance using non-linguistic Cues?
+#  Do Speakers Mark Themselves? A Study on Speaker Discrimination at the Start of Conversational Turns
 No evidence found for this...
+
+You can look at the data and visualize the results in `data_inspection.ipynb`.
 
 ## Scripts
 ### `data_prep.py`
